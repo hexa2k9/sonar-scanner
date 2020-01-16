@@ -15,11 +15,11 @@ add_env_var_as_env_prop "${SONAR_PASSWORD:-}" "sonar.password"
 add_env_var_as_env_prop "${SONAR_USER_HOME:-}" "sonar.userHome"
 add_env_var_as_env_prop "${SONAR_PROJECT_BASE_DIR:-}" "sonar.projectBaseDir"
 
-PROJECT_BASE_DIR="$PWD"
+PROJECT_BASE_DIR="${PWD}"
 if [ "${SONAR_PROJECT_BASE_DIR:-}" ]; then
   PROJECT_BASE_DIR="${SONAR_PROJECT_BASE_DIR}"
 fi
 
-export SONAR_USER_HOME="$PROJECT_BASE_DIR/.sonar"
-sonar-scanner "${args[@]}"
+export SONAR_USER_HOME="${PROJECT_BASE_DIR}/.sonar"
 
+sonar-scanner "${args[@]}"
