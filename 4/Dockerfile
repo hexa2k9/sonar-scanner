@@ -11,8 +11,16 @@ ENV SONAR_SCANNER_HOME=${SONAR_SCANNER_HOME} \
     NODE_PATH=${NODEJS_HOME}/lib/node_modules
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates git wget unzip xz-utils pylint \
+    && apt-get install -y --no-install-recommends ca-certificates git wget unzip xz-utils pylint locales \
     && rm -rf /var/lib/apt/lists/*
+
+RUN printf "en_US.UTF-8 UTF-8\n" | tee -a /etc/locale.gen \
+    && locale-gen \
+    && ln -nsf /usr/share/zoneinfo/UTC /etc/localtime \
+    && dpkg-reconfigure tzdata
+
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
 
 WORKDIR /opt
 RUN wget -q -O /opt/sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux.zip \
