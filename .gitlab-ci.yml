@@ -1,15 +1,12 @@
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_BUILDKIT: 1
-  DOCKER_HOST: tcp://127.0.0.1:2375
   REGISTRY_ORG: "port389"
   QUAY_REGISTRY: "quay.io"
 
 build image:
   image: docker:stable
   stage: build
-  services:
-    - docker:${DOCKER_DIND_VERSION}
   tags:
     - dockersock
   variables:
