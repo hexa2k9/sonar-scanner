@@ -31,7 +31,7 @@ RUN wget -q -O /opt/sonar-scanner-cli.zip https://binaries.sonarsource.com/Distr
     && tar Jxf nodejs.tar.xz \
     && rm nodejs.tar.xz \
     && mv node-${NODEJS_VERSION}-linux-x64 ${NODEJS_HOME} \
-    && npm install -g typescript@3.6.3
+    && npm install -g typescript@3.7.5
 
 WORKDIR /usr/src
 
