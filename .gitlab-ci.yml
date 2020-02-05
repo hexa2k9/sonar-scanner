@@ -2,20 +2,20 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_BUILDKIT: 1
   DOCKER_HOST: tcp://127.0.0.1:2375
-  GOOGLE_PROJECT: metro-markets-cps
-  GOOGLE_REGISTRY: eu.gcr.io
-
-services:
-  - docker:${DOCKER_DIND_VERSION}
+  REGISTRY_ORG: "port389"
+  QUAY_REGISTRY: "quay.io"
 
 build image:
   image: docker:stable
   stage: build
+  services:
+    - docker:${DOCKER_DIND_VERSION}
+  tags:
+    - dockersock
   variables:
-    DOCKER_IMAGE: ${GOOGLE_REGISTRY}/${GOOGLE_PROJECT}/sonar-scanner
+    DOCKER_IMAGE: ${QUAY_REGISTRY}/${REGISTRY_ORG}/sonar-scanner
   before_script:
-    - echo ${GOOGLE_SA} | docker login --username _json_key --password-stdin https://${GOOGLE_REGISTRY}
-    - docker pull ${DOCKER_IMAGE} || true
+    - docker login -u "${QUAY_USER}" -p "${QUAY_PASSWORD}" ${QUAY_REGISTRY}
   script:
-    - docker build --tag ${DOCKER_IMAGE} --cache-from ${DOCKER_IMAGE} "4"
+    - docker build --pull --tag "${DOCKER_IMAGE}"  "4"
     - docker push ${DOCKER_IMAGE}
