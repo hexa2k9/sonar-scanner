@@ -10,8 +10,10 @@ ENV SONAR_SCANNER_HOME=${SONAR_SCANNER_HOME} \
     PATH=${SONAR_SCANNER_HOME}/bin:${NODEJS_HOME}/bin:${PATH} \
     NODE_PATH=${NODEJS_HOME}/lib/node_modules
 
+ADD rootfs /
+
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates git wget unzip xz-utils pylint locales \
+    && apt-get install -y --no-install-recommends ca-certificates git wget unzip xz-utils python3 pylint locales \
     && rm -rf /var/lib/apt/lists/*
 
 RUN printf "en_US.UTF-8 UTF-8\n" | tee -a /etc/locale.gen \
