@@ -1,14 +1,10 @@
 variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_BUILDKIT: 1
   REGISTRY_ORG: "port389"
   QUAY_REGISTRY: "quay.io"
 
 build image:
   image: docker:stable
   stage: build
-  tags:
-    - dockersock
   variables:
     DOCKER_IMAGE: ${QUAY_REGISTRY}/${REGISTRY_ORG}/sonar-scanner:${SONAR_SCANNER_VERSION}
   before_script:
