@@ -1,40 +1,55 @@
-FROM debian:stretch-slim
+FROM alpine:3.14
 
 ARG SONAR_SCANNER_HOME=/opt/sonar-scanner
-ARG NODEJS_HOME=/opt/nodejs
-ARG NODEJS_VERSION=v10.16.3
-ARG SONAR_SCANNER_VERSION=4.3.0.2102
-
-ENV SONAR_SCANNER_HOME=${SONAR_SCANNER_HOME} \
-    NODEJS_HOME=${NODEJS_HOME} \
-    PATH=${SONAR_SCANNER_HOME}/bin:${NODEJS_HOME}/bin:${PATH} \
-    NODE_PATH=${NODEJS_HOME}/lib/node_modules
+ARG SONAR_SCANNER_VERSION
+ARG UID=1000
+ARG GID=1000
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk \
+    HOME=/tmp \
+    XDG_CONFIG_HOME=/tmp \
+    SONAR_SCANNER_HOME=${SONAR_SCANNER_HOME} \
+    SONAR_USER_HOME=${SONAR_SCANNER_HOME}/.sonar \
+    PATH=/opt/java/openjdk/bin:${SONAR_SCANNER_HOME}/bin:${PATH} \
+    NODE_PATH=/usr/lib/node_modules \
+    SRC_PATH=/usr/src \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
 ADD rootfs /
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates git wget unzip xz-utils python3 pylint locales \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN printf "en_US.UTF-8 UTF-8\n" | tee -a /etc/locale.gen \
-    && locale-gen \
-    && ln -nsf /usr/share/zoneinfo/UTC /etc/localtime \
-    && dpkg-reconfigure tzdata
-
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-
 WORKDIR /opt
-RUN wget -q -O /opt/sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux.zip \
+
+RUN set -eux \
+    && chmod +x /usr/bin/entrypoint.sh /usr/bin/phpunit-junit-edit.py \
+    && addgroup -S -g ${GID} scanner-cli \
+    && adduser -S -D -u ${UID} -G scanner-cli scanner-cli \
+    && apk add --no-cache --virtual build-dependencies \
+        unzip \
+    && apk add --no-cache \
+        git \
+        bash \
+        curl \
+        py-pip \
+        python3 \
+        'npm>7' \
+        shellcheck \
+        'nodejs>12' \
+        musl-locales \
+        openjdk11-jre \
+        musl-locales-lang \
+    && curl -sS -o /opt/sonar-scanner-cli.zip \
+        https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}.zip \
     && unzip sonar-scanner-cli.zip \
     && rm sonar-scanner-cli.zip \
-    && mv sonar-scanner-${SONAR_SCANNER_VERSION}-linux ${SONAR_SCANNER_HOME} \
-    && wget -q -O nodejs.tar.xz https://nodejs.org/dist/${NODEJS_VERSION}/node-${NODEJS_VERSION}-linux-x64.tar.xz \
-    && tar Jxf nodejs.tar.xz \
-    && rm nodejs.tar.xz \
-    && mv node-${NODEJS_VERSION}-linux-x64 ${NODEJS_HOME} \
-    && npm install -g typescript@3.7.5
+    && mv sonar-scanner-${SONAR_SCANNER_VERSION} ${SONAR_SCANNER_HOME} \
+    && pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir pylint \
+    && apk del --purge build-dependencies \
+    && mkdir -p "${SRC_PATH}" "${SONAR_USER_HOME}" "${SONAR_USER_HOME}/cache" \
+    && chown -R scanner-cli:scanner-cli "${SONAR_SCANNER_HOME}" "${SRC_PATH}" \
+    && chmod -R 777 "${SRC_PATH}" "${SONAR_USER_HOME}"
 
-WORKDIR /usr/src
+WORKDIR ${SRC_PATH}
 
 ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+
+CMD ["sonar-scanner"]
