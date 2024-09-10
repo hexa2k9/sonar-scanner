@@ -30,6 +30,7 @@ RUN set -eux \
         curl \
         py-pip \
         python3 \
+        py3-pylint \
         'npm>7' \
         shellcheck \
         'nodejs>12' \
@@ -41,9 +42,6 @@ RUN set -eux \
     && unzip sonar-scanner-cli.zip \
     && rm sonar-scanner-cli.zip \
     && mv sonar-scanner-${SONAR_SCANNER_VERSION} ${SONAR_SCANNER_HOME} \
-    && pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir pylint \
-    && apk del --purge build-dependencies \
     && mkdir -p "${SRC_PATH}" "${SONAR_USER_HOME}" "${SONAR_USER_HOME}/cache" \
     && chown -R scanner-cli:scanner-cli "${SONAR_SCANNER_HOME}" "${SRC_PATH}" \
     && chmod -R 777 "${SRC_PATH}" "${SONAR_USER_HOME}"
