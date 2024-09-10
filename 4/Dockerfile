@@ -1,4 +1,4 @@
-FROM alpine:3.14
+FROM alpine:3.20
 
 ARG SONAR_SCANNER_HOME=/opt/sonar-scanner
 ARG SONAR_SCANNER_VERSION
@@ -34,7 +34,7 @@ RUN set -eux \
         shellcheck \
         'nodejs>12' \
         musl-locales \
-        openjdk11-jre \
+        openjdk17-jre \
         musl-locales-lang \
     && curl -sS -o /opt/sonar-scanner-cli.zip \
         https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}.zip \
