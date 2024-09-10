@@ -4,7 +4,7 @@ ARG SONAR_SCANNER_HOME=/opt/sonar-scanner
 ARG SONAR_SCANNER_VERSION
 ARG UID=1000
 ARG GID=1000
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk \
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk \
     HOME=/tmp \
     XDG_CONFIG_HOME=/tmp \
     SONAR_SCANNER_HOME=${SONAR_SCANNER_HOME} \
