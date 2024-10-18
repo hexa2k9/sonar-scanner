@@ -31,9 +31,9 @@ RUN set -eux \
         py-pip \
         python3 \
         py3-pylint \
-        'npm>7' \
+        npm \
         shellcheck \
-        'nodejs>12' \
+        nodejs \
         musl-locales \
         openjdk17-jre \
         musl-locales-lang \
