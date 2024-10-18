@@ -10,7 +10,7 @@ build image:
   before_script:
     - docker login -u "${QUAY_USER}" -p "${QUAY_PASSWORD}" ${QUAY_REGISTRY}
   script:
-    - docker build --build-arg SONAR_SCANNER_VERSION=${SONAR_SCANNER_VERSION} --pull --tag "${DOCKER_IMAGE}"  "4"
+    - docker build --build-arg SONAR_SCANNER_VERSION=${SONAR_SCANNER_VERSION} --pull --tag "${DOCKER_IMAGE}"  docker
     - docker push ${DOCKER_IMAGE}
   parallel:
     matrix:
