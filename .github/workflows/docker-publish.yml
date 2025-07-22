@@ -15,12 +15,9 @@ jobs:
     strategy:
       matrix:
         version:
-          - 6.0.0.4432
-          - 6.1.0.4477
-          - 6.2.1.4610
-          - 7.0.0.4796
           - 7.0.2.4839
           - 7.1.0.4889
+          - 7.2.0.5079
     runs-on: ubuntu-latest
     permissions:
       contents: read
